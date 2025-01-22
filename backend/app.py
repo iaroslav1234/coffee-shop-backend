@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 app = Flask(__name__, static_folder='static', static_url_path='')
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Database configuration
 db_path = os.environ.get('DATABASE_URL', 'sqlite:///coffee_shop.db')
@@ -797,11 +797,19 @@ def get_profit_report():
 
 @app.route('/api/health')
 def health_check():
-    return jsonify({
-        "status": "healthy",
-        "version": "1.0.1",
-        "message": "Coffee Shop Manager is running!"
-    }), 200
+    try:
+        # Try to query the database
+        db.session.execute('SELECT 1')
+        return jsonify({
+            "status": "healthy",
+            "database": "connected"
+        }), 200
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return jsonify({
+            "status": "unhealthy",
+            "error": str(e)
+        }), 500
 
 # Error handlers
 @app.errorhandler(404)
