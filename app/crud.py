@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .auth import get_password_hash
+from datetime import datetime
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
@@ -40,3 +41,10 @@ def create_sale(db: Session, sale: schemas.SaleCreate):
 
 def get_sales(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Sale).offset(skip).limit(limit).all()
+
+def get_orders_by_date_range(db: Session, start_date: datetime, end_date: datetime):
+    """Get all orders between start_date and end_date."""
+    return db.query(models.Order)\
+        .filter(models.Order.created_at >= start_date)\
+        .filter(models.Order.created_at <= end_date)\
+        .all()

@@ -17,6 +17,7 @@ from app.auth import (
     request_password_reset,
     reset_password
 )
+from app.routers import auth, finance
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
@@ -144,6 +145,9 @@ async def google_login(token_data: schemas.GoogleToken, db: Session = Depends(ge
             status_code=400,
             detail=str(e)
         )
+
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(finance.router, prefix="/finance", tags=["finance"])
 
 # Inventory endpoints
 @app.get("/inventory", response_model=List[schemas.Inventory])
