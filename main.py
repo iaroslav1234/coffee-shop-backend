@@ -26,7 +26,10 @@ app = FastAPI(title="Coffee Shop API")
 # CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React frontend URL
+    allow_origins=[
+        "http://localhost:3000",  # Local development
+        "https://coffee-shop-frontend-fresh-production.up.railway.app"  # Production frontend
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
